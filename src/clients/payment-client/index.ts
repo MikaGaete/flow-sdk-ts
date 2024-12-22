@@ -58,7 +58,7 @@ export class FlowPaymentClient extends BaseClient {
     }
 
     /**
-     * Generates a new payment order based on the provided properties.S
+     * Generates a new payment order based on the provided properties.
      * @param {PaymentOrderProps} props - An object containing the properties of the payment order to be generated.
      * @param {string} props.commerceOrder - The identifier or order number associated with the commerce transaction.
      * @param {string} props.subject - A description of the subject or purpose of the payment order.
