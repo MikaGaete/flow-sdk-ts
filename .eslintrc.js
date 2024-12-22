@@ -22,5 +22,7 @@ module.exports = {
         "sourceType": "module"
     },
     "rules": {
+        "eol-last": "off",
+        "@typescript-eslint/indent": ["error", 4],
     }
 }
