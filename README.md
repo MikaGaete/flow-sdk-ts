@@ -9,7 +9,9 @@ Unofficial [but wonderful] heavily typed NodeJS Flow SDK to ease your integratio
 Install flow-sdk in your project
 
 ```bash
-  npm install flow-sdk
+  npm install flow-sdk-ts
+  # or
+  yarn add flow-sdk-ts
 ```
 
 ## Usage/Examples
@@ -36,6 +38,6 @@ const deletedDiscount = await flowClient.coupons.deleteDiscountCoupon(
 );
 ```
 
-## Authors
+## Authors and Contributors
 
-- [@JoseTomasSilvaZ](https://www.github.com/JoseTomasSilvaZ)
+- [@MikaGaete](https://github.com/MikaGaete)
