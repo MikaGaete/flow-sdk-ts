@@ -12,8 +12,8 @@ export class FlowCouponClient extends BaseClient {
      * @returns A promise resolving to the created discount coupon.
      */
     async generateDiscountCoupon (props: DiscountCouponProps): Promise<Discount> {
-        const signature = this.signParams(props)
-        const body = this.generateSearchParams({ ...props, s: signature })
+        const signature = this.signParams({ ...props, apiKey: this.apiKey })
+        const body = this.generateSearchParams({ ...props, apiKey: this.apiKey, s: signature })
         return await this.request(`${this.baseURL}/coupon/create`, { method: 'POST', body })
     }
 
@@ -23,8 +23,8 @@ export class FlowCouponClient extends BaseClient {
      * @returns A promise resolving to the updated discount coupon.
      */
     async editDiscountCoupon (props: EditCouponProps): Promise<Discount> {
-        const signature = this.signParams(props)
-        const body = this.generateSearchParams({ ...props, s: signature })
+        const signature = this.signParams({ ...props, apiKey: this.apiKey })
+        const body = this.generateSearchParams({ ...props, apiKey: this.apiKey, s: signature })
         return await this.request(`${this.baseURL}/coupon/edit`, { method: 'POST', body })
     }
 
@@ -34,8 +34,8 @@ export class FlowCouponClient extends BaseClient {
      * @returns A promise resolving to the deleted discount coupon's data.
      */
     async deleteDiscountCoupon (couponId: string): Promise<Discount> {
-        const signature = this.signParams({ couponId })
-        const body = this.generateSearchParams({ couponId, s: signature })
+        const signature = this.signParams({ couponId, apiKey: this.apiKey })
+        const body = this.generateSearchParams({ couponId, apiKey: this.apiKey, s: signature })
         return await this.request(`${this.baseURL}/coupon/delete`, { method: 'POST', body })
     }
 
@@ -45,8 +45,8 @@ export class FlowCouponClient extends BaseClient {
      * @returns A promise resolving to the discount coupon.
      */
     async getDiscountCoupon (couponId: string): Promise<Discount> {
-        const signature = this.signParams({ couponId })
-        const params = this.generateSearchParams({ couponId, s: signature, apiKey: this.apiKey }).toString()
+        const signature = this.signParams({ couponId, apiKey: this.apiKey })
+        const params = this.generateSearchParams({ couponId, apiKey: this.apiKey, s: signature }).toString()
         return await this.request(`${this.baseURL}/coupon/get?${params}`)
     }
 
@@ -57,7 +57,7 @@ export class FlowCouponClient extends BaseClient {
      */
     async getListOfDiscountCoupons (props: DiscountCouponsListProps): Promise<ListResponse<Discount>> {
         const signature = this.signParams(props)
-        const params = this.generateSearchParams({ ...props, s: signature, apiKey: this.apiKey }).toString()
+        const params = this.generateSearchParams({ ...props, apiKey: this.apiKey, s: signature }).toString()
         return await this.request(`${this.baseURL}/coupon/list?${params}`)
     }
 }
