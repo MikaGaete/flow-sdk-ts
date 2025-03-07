@@ -12,9 +12,9 @@ The 'flow-sdk-v2' package can be installed via npm and yarn, executing one of th
 following commands:
 
 ```bash
-  npm install flow-sdk-ts
+  npm install flow-sdk-v2
   # or
-  yarn add flow-sdk-ts
+  yarn add flow-sdk-v2
 ```
 
 ## Clients and methods

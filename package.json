@@ -1,7 +1,7 @@
 {
   "name": "flow-sdk-v2",
-  "version": "2.0.1",
-  "description": "Flow SDK (Not Official)",
+  "version": "2.0.5",
+  "description": "Flow SDK v2 (Not Official)",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
