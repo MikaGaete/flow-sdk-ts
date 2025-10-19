@@ -34,7 +34,7 @@ export class FlowSubscriptionClient extends BaseClient {
      * @param filter - Filters to apply when fetching subscriptions.
      * @returns A promise resolving to the list of subscriptions.
      */
-    async getSubscriptions (planId: string, filter: Filter): Promise<ListResponse<Subscription>> {
+    async getSubscriptions (planId: string, filter?: Filter): Promise<ListResponse<Subscription>> {
         const signature = this.signParams({ planId, ...filter, apiKey: this.apiKey })
         const params = this.generateSearchParams({ planId, ...filter, s: signature, apiKey: this.apiKey }).toString()
         return await this.request(`${this.baseURL}/subscription/list?${params}`)
