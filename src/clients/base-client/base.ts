@@ -1,6 +1,6 @@
-import CryptoJS from 'crypto-js'
 import z from 'zod'
 import { FlowHTTPError } from '../../error/FlowError'
+import { createHmac } from 'crypto'
 export type Environments = 'development' | 'production'
 
 export default abstract class BaseClient {
@@ -53,8 +53,8 @@ export default abstract class BaseClient {
             }
             return acc
         }, '')
-        const signature = CryptoJS.HmacSHA256(concatenatedParams, this.secret)
-        return CryptoJS.enc.Hex.stringify(signature)
+        const hmac = createHmac('sha256', this.secret)
+        return hmac.update(concatenatedParams).digest('hex')
     }
 
     protected parseParams<T>(params: T, schema: z.ZodType<T>): T {

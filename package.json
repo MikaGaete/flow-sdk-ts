@@ -1,6 +1,6 @@
 {
   "name": "flow-sdk-v2",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "Flow SDK (Not Official)",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -32,7 +32,6 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "crypto-js": "^4.2.0",
     "zod": "^3.22.4"
   }
 }
