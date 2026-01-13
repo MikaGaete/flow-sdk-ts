@@ -13,7 +13,7 @@ export class FlowCouponClient extends BaseClient {
      */
     async generateDiscountCoupon (props: DiscountCouponProps): Promise<Discount> {
         const signature = this.signParams(props)
-        const body = this.generateSearchParams({ ...props, s: signature })
+        const body = this.generateSearchParams({ ...props, s: signature, apiKey: this.apiKey })
         return await this.request(`${this.baseURL}/coupon/create`, { method: 'POST', body })
     }
 
@@ -24,7 +24,7 @@ export class FlowCouponClient extends BaseClient {
      */
     async editDiscountCoupon (props: EditCouponProps): Promise<Discount> {
         const signature = this.signParams(props)
-        const body = this.generateSearchParams({ ...props, s: signature })
+        const body = this.generateSearchParams({ ...props, s: signature, apiKey: this.apiKey })
         return await this.request(`${this.baseURL}/coupon/edit`, { method: 'POST', body })
     }
 
@@ -35,7 +35,7 @@ export class FlowCouponClient extends BaseClient {
      */
     async deleteDiscountCoupon (couponId: string): Promise<Discount> {
         const signature = this.signParams({ couponId })
-        const body = this.generateSearchParams({ couponId, s: signature })
+        const body = this.generateSearchParams({ couponId, s: signature, apiKey: this.apiKey })
         return await this.request(`${this.baseURL}/coupon/delete`, { method: 'POST', body })
     }
 
