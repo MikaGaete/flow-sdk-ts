@@ -572,6 +572,129 @@ const groups: Record<string, SpecCase[]> = {
             call: async () => await flow.merchants.getListOfAssociatedCommerces({ start: 0, limit: 10 }),
             required: [['apiKey', 'APIKEY'], ['s', null]]
         }
+    ],
+
+    'payment (added)': [
+        {
+            name: 'generateEmailPayment -> POST /payment/createEmail',
+            path: '/api/payment/createEmail',
+            verb: 'POST',
+            call: async () => await flow.payments.generateEmailPayment({
+                commerceOrder: 'ce-1',
+                subject: 'Email charge',
+                amount: 1500,
+                email: 'payer@example.com',
+                urlConfirmation: 'https://example.com/confirm',
+                urlReturn: 'https://example.com/return'
+            }),
+            required: [
+                ['apiKey', 'APIKEY'],
+                ['commerceOrder', 'ce-1'],
+                ['subject', 'Email charge'],
+                ['amount', '1500'],
+                ['email', 'payer@example.com'],
+                ['urlConfirmation', 'https://example.com/confirm'],
+                ['urlReturn', 'https://example.com/return'],
+                ['s', null]
+            ]
+        },
+        {
+            name: 'getPayments -> GET /payment/getPayments',
+            path: '/api/payment/getPayments',
+            verb: 'GET',
+            call: async () => await flow.payments.getPayments({ date: '2026-01-15' }),
+            required: [['apiKey', 'APIKEY'], ['date', '2026-01-15'], ['s', null]]
+        },
+        {
+            name: 'getTransactions -> GET /payment/getTransactions',
+            path: '/api/payment/getTransactions',
+            verb: 'GET',
+            call: async () => await flow.payments.getTransactions({ date: '2026-01-15' }),
+            required: [['apiKey', 'APIKEY'], ['date', '2026-01-15'], ['s', null]]
+        }
+    ],
+
+    'subscription (added)': [
+        {
+            name: 'addItem -> POST /subscription/addItem',
+            path: '/api/subscription/addItem',
+            verb: 'POST',
+            call: async () => await flow.subscriptions.addItem({ subscriptionId: 'sus_1', itemId: 7 }),
+            required: [['apiKey', 'APIKEY'], ['subscriptionId', 'sus_1'], ['itemId', '7'], ['s', null]]
+        },
+        {
+            name: 'updateItem -> POST /subscription/updateItem',
+            path: '/api/subscription/updateItem',
+            verb: 'POST',
+            call: async () => await flow.subscriptions.updateItem({ subscriptionId: 'sus_1', itemId: 7, quantity: 3 }),
+            required: [['apiKey', 'APIKEY'], ['subscriptionId', 'sus_1'], ['itemId', '7'], ['quantity', '3'], ['s', null]]
+        },
+        {
+            name: 'deleteItem -> POST /subscription/deleteItem',
+            path: '/api/subscription/deleteItem',
+            verb: 'POST',
+            call: async () => await flow.subscriptions.deleteItem({ subscriptionId: 'sus_1', itemId: 7 }),
+            required: [['apiKey', 'APIKEY'], ['subscriptionId', 'sus_1'], ['itemId', '7'], ['s', null]]
+        },
+        {
+            name: 'changePlan -> POST /subscription/changePlan',
+            path: '/api/subscription/changePlan',
+            verb: 'POST',
+            call: async () => await flow.subscriptions.changePlan({ subscriptionId: 'sus_1', newPlanId: 'plan-2' }),
+            required: [['apiKey', 'APIKEY'], ['subscriptionId', 'sus_1'], ['newPlanId', 'plan-2'], ['s', null]]
+        },
+        {
+            name: 'previewPlanChange -> POST /subscription/changePlanPreview',
+            path: '/api/subscription/changePlanPreview',
+            verb: 'POST',
+            call: async () => await flow.subscriptions.previewPlanChange({ subscriptionId: 'sus_1', newPlanId: 'plan-2' }),
+            required: [['apiKey', 'APIKEY'], ['subscriptionId', 'sus_1'], ['newPlanId', 'plan-2'], ['s', null]]
+        },
+        {
+            name: 'cancelPlanChange -> POST /subscription/changePlanCancel',
+            path: '/api/subscription/changePlanCancel',
+            verb: 'POST',
+            call: async () => await flow.subscriptions.cancelPlanChange('sus_1'),
+            required: [['apiKey', 'APIKEY'], ['subscriptionId', 'sus_1'], ['s', null]]
+        }
+    ],
+
+    subscription_item: [
+        {
+            name: 'createItem -> POST /subscription_item/create',
+            path: '/api/subscription_item/create',
+            verb: 'POST',
+            call: async () => await flow.subscriptionItems.createItem({ name: 'Extra', currency: 'CLP', amount: 500 }),
+            required: [['apiKey', 'APIKEY'], ['name', 'Extra'], ['currency', 'CLP'], ['amount', '500'], ['s', null]]
+        },
+        {
+            name: 'getItem -> GET /subscription_item/get',
+            path: '/api/subscription_item/get',
+            verb: 'GET',
+            call: async () => await flow.subscriptionItems.getItem('item-1'),
+            required: [['apiKey', 'APIKEY'], ['itemId', 'item-1'], ['s', null]]
+        },
+        {
+            name: 'editItem -> POST /subscription_item/edit',
+            path: '/api/subscription_item/edit',
+            verb: 'POST',
+            call: async () => await flow.subscriptionItems.editItem({ itemId: 'item-1', amount: 600, changeType: 'all' }),
+            required: [['apiKey', 'APIKEY'], ['itemId', 'item-1'], ['s', null]]
+        },
+        {
+            name: 'deleteItem -> POST /subscription_item/delete',
+            path: '/api/subscription_item/delete',
+            verb: 'POST',
+            call: async () => await flow.subscriptionItems.deleteItem({ itemId: 'item-1', changeType: 'to_future' }),
+            required: [['apiKey', 'APIKEY'], ['itemId', 'item-1'], ['changeType', 'to_future'], ['s', null]]
+        },
+        {
+            name: 'listItems -> GET /subscription_item/list',
+            path: '/api/subscription_item/list',
+            verb: 'GET',
+            call: async () => await flow.subscriptionItems.listItems({ limit: 10 }),
+            required: [['apiKey', 'APIKEY'], ['s', null]]
+        }
     ]
 }
 

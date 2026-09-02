@@ -134,4 +134,41 @@ describeSandbox('sandbox (live): routes, verbs and signatures Flow accepts', () 
         const subscriptions = await flow.subscriptions.getSubscriptions(planId, { limit: 3 })
         expect(Array.isArray(subscriptions.data)).toBe(true)
     })
+
+    // --- endpoints added by add-missing-flow-endpoints (read-only checks) ---
+
+    test('payment/getPayments and payment/getTransactions return the List envelope', async () => {
+        const day = ymd(new Date())
+        const payments = await flow.payments.getPayments({ date: day, limit: 3 })
+        expect(Array.isArray(payments.data)).toBe(true)
+        expect(typeof payments.total).toBe('number')
+
+        const transactions = await flow.payments.getTransactions({ date: day, limit: 3 })
+        expect(Array.isArray(transactions.data)).toBe(true)
+    })
+
+    test('subscription_item/list returns a paginated envelope', async () => {
+        const res = await flow.subscriptionItems.listItems({ limit: 3 })
+        expect(Array.isArray(res.data)).toBe(true)
+    })
+
+    test('subscription_item/get on a bogus id reaches the endpoint', async () => {
+        try {
+            const res = await flow.subscriptionItems.getItem('bogus-item-000')
+            expect(res).toBeDefined()
+        }
+        catch (error) {
+            expect(error).toBeInstanceOf(FlowHTTPError)
+        }
+    })
+
+    test('subscription/changePlanPreview on bogus ids reaches the endpoint', async () => {
+        try {
+            const res = await flow.subscriptions.previewPlanChange({ subscriptionId: 'bogus', newPlanId: 'bogus' })
+            expect(res).toBeDefined()
+        }
+        catch (error) {
+            expect(error).toBeInstanceOf(FlowHTTPError)
+        }
+    })
 })
