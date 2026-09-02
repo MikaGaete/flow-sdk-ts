@@ -19,6 +19,33 @@ export const paymentOrderPropsSchema = z.object({
 
 export type PaymentOrderProps = z.infer<typeof paymentOrderPropsSchema>
 
+export const emailPaymentPropsSchema = z.object({
+    commerceOrder: z.string(),
+    subject: z.string(),
+    amount: z.number().positive(),
+    email: z.string().email(),
+    urlConfirmation: z.string().url(),
+    urlReturn: z.string().url(),
+    currency: z.string().optional(),
+    forward_days_after: z.number().optional(),
+    forward_times: z.number().optional(),
+    optional: z.string().optional(),
+    timeout: z.number().optional(),
+    checkout_timeout: z.number().optional(),
+    merchantId: z.string().optional(),
+    payment_currency: z.string().optional()
+})
+
+export type EmailPaymentProps = z.infer<typeof emailPaymentPropsSchema>
+
+export const paymentsListPropsSchema = z.object({
+    date: z.string(),
+    start: z.number().optional(),
+    limit: z.number().optional()
+})
+
+export type PaymentsListProps = z.infer<typeof paymentsListPropsSchema>
+
 export interface PaymentsListsResponse {
     total: number
     hasMore: boolean

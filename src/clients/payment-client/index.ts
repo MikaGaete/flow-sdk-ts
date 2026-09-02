@@ -1,5 +1,6 @@
+import { type ListResponse } from '../../types'
 import BaseClient from '../base-client/base'
-import { type ExtendedPaymentOrderStatus, type NewPaymentOrderResponse, type PaymentOrderProps, type Payment, type RawNewPaymentOrderResponse, paymentOrderPropsSchema } from './types'
+import { type EmailPaymentProps, type ExtendedPaymentOrderStatus, type NewPaymentOrderResponse, type PaymentOrderProps, type Payment, type PaymentsListProps, type RawNewPaymentOrderResponse, emailPaymentPropsSchema, paymentOrderPropsSchema, paymentsListPropsSchema } from './types'
 
 export class FlowPaymentClient extends BaseClient {
     /**
@@ -95,5 +96,68 @@ export class FlowPaymentClient extends BaseClient {
             redirectionUrl: `${response.url}?token=${response.token}`,
             raw: response
         }
+    }
+
+    /**
+     * Generates a payment collection sent to the payer by email. Flow emails the
+     * order details and a payment link built as `url + "?token=" + token`.
+     * @param {EmailPaymentProps} props - The email-payment properties.
+     * @param {string} props.commerceOrder - The commerce order identifier.
+     * @param {string} props.subject - Description of the order.
+     * @param {number} props.amount - Amount of the order.
+     * @param {string} props.email - Email of the payer.
+     * @param {string} props.urlConfirmation - Callback URL where Flow confirms the payment.
+     * @param {string} props.urlReturn - Return URL where Flow redirects the payer.
+     * @param {string} [props.currency] - Currency of the order. (Optional)
+     * @param {number} [props.forward_days_after] - Days after which a reminder email is sent if the order is still unpaid. (Optional)
+     * @param {number} [props.forward_times] - Number of reminder emails to send. (Optional)
+     * @param {string} [props.optional] - Optional data as a JSON string. (Optional)
+     * @param {number} [props.timeout] - Seconds until the order expires. When omitted the order never expires. (Optional)
+     * @param {number} [props.checkout_timeout] - Seconds the payer has to pick a payment method in the checkout. (Optional)
+     * @param {string} [props.merchantId] - Associated merchant id. Only for integrator commerces. (Optional)
+     * @param {string} [props.payment_currency] - Currency in which the order is expected to be paid. (Optional)
+     * @returns {Promise<RawNewPaymentOrderResponse>} The url, token and flowOrder of the created order.
+     */
+    async generateEmailPayment (props: EmailPaymentProps): Promise<RawNewPaymentOrderResponse> {
+        const params = this.parseParams(props, emailPaymentPropsSchema)
+        const signature = this.signParams({ ...params, apiKey: this.apiKey })
+        const body = this.generateSearchParams({ ...params, apiKey: this.apiKey, s: signature })
+        return await this.request<RawNewPaymentOrderResponse>(`${this.baseURL}/payment/createEmail`, { method: 'POST', body })
+    }
+
+    /**
+     * Retrieves the paginated list of payments received on a given day.
+     * @param {PaymentsListProps} props - Query properties.
+     * @param {string} props.date - The day to query, in `yyyy-mm-dd` format.
+     * @param {number} [props.start] - Start record of the page (default 0). (Optional)
+     * @param {number} [props.limit] - Records per page (default 10, Flow caps it at 100). (Optional)
+     * @returns {Promise<ListResponse<Payment>>} A paginated list of payments.
+     * The elements are typed as `Payment`: Flow's spec states the list objects
+     * "tienen la misma estructura de los retornados en los servicios
+     * payment/getStatus" (openapi L781).
+     */
+    async getPayments (props: PaymentsListProps): Promise<ListResponse<Payment>> {
+        const params = this.parseParams(props, paymentsListPropsSchema)
+        const signature = this.signParams({ ...params, apiKey: this.apiKey })
+        const query = this.generateSearchParams({ ...params, apiKey: this.apiKey, s: signature }).toString()
+        return await this.request<ListResponse<Payment>>(`${this.baseURL}/payment/getPayments?${query}`)
+    }
+
+    /**
+     * Retrieves the paginated list of transactions performed on a given day, a
+     * distinct operation from {@link getPayments}.
+     * @param {PaymentsListProps} props - Query properties.
+     * @param {string} props.date - The day to query, in `yyyy-mm-dd` format.
+     * @param {number} [props.start] - Start record of the page (default 0). (Optional)
+     * @param {number} [props.limit] - Records per page (default 10, Flow caps it at 100). (Optional)
+     * @returns {Promise<ListResponse<Payment>>} A paginated list of transactions.
+     * The elements are typed as `Payment` on the same basis as `getPayments`
+     * (openapi L926).
+     */
+    async getTransactions (props: PaymentsListProps): Promise<ListResponse<Payment>> {
+        const params = this.parseParams(props, paymentsListPropsSchema)
+        const signature = this.signParams({ ...params, apiKey: this.apiKey })
+        const query = this.generateSearchParams({ ...params, apiKey: this.apiKey, s: signature }).toString()
+        return await this.request<ListResponse<Payment>>(`${this.baseURL}/payment/getTransactions?${query}`)
     }
 }
