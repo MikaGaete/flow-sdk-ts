@@ -1,5 +1,28 @@
 # flow-sdk-v2
 
+## 2.2.1
+
+### Patch Changes
+
+- Alinea la licencia declarada y los metadatos del paquete con lo que
+  efectivamente se distribuye, y mejora su descubribilidad en npm:
+
+  - Declara `MIT` como licencia en `package.json`, coincidiendo con el texto que
+    el archivo `LICENSE` siempre distribuyó. Antes `package.json` declaraba
+    `ISC`, una discrepancia entre la licencia declarada y la distribuida.
+  - El `LICENSE` queda con un único titular de copyright: Mikael Gaete López
+    (2024-presente).
+  - Añade los campos `bugs` y `homepage`, y normaliza `repository.url` al
+    formato canónico `git+https://...git`.
+  - Añade `keywords` y amplía `description`, que no contenían los términos por
+    los que se busca el paquete en npm (`flow.cl`, `pagos`, `chile`).
+  - Actualiza la sección _Licencia_ del README para reflejar el `LICENSE`
+    vigente; la mención al origen del proyecto como fork de
+    [flow-sdk](https://github.com/Mindset-Studio/flow-sdk) ahora vive en la
+    sección _Autor_.
+
+  No hay cambios de código ni de API.
+
 ## 2.2.0
 
 ### Minor Changes

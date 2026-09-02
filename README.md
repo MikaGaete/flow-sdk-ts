@@ -226,3 +226,10 @@ plan base.
 ## Autor
 
 - [@MikaGaete](https://github.com/MikaGaete)
+
+El proyecto se originó como un fork de
+[flow-sdk](https://github.com/Mindset-Studio/flow-sdk).
+
+## Licencia
+
+[MIT](./LICENSE).
