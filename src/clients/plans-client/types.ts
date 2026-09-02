@@ -10,11 +10,18 @@ export const PlansPropsSchema = z.object({
     trial_period_days: z.number().optional(),
     days_until_due: z.number().optional(),
     periods_number: z.number().optional(),
-    urlCallback: z.string().url(),
+    urlCallback: z.string().url().optional(),
     charges_retries_number: z.number().optional(),
     currency_convert_option: z.enum(['1', '2']).optional()
 })
 export type PlansProps = z.infer<typeof PlansPropsSchema>
+
+/**
+ * Parameters for `POST /plans/edit`. Only `planId` is required; every other
+ * field is optional, and for a plan with active subscribers Flow only lets
+ * `trial_period_days` be modified.
+ */
+export type EditPlanProps = Partial<Omit<PlansProps, 'planId'>> & { planId: string }
 
 export interface PlansResponse {
     planId: string
@@ -46,5 +53,5 @@ export type ListPlansProps = z.infer<typeof ListPlansPropsSchema>
 export interface ListPlansResponse {
     total: number
     hasMore: boolean
-    data: unknown[]
+    data: PlansResponse[]
 }

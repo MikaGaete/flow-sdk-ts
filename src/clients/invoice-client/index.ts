@@ -25,7 +25,7 @@ export class FlowInvoiceClient extends BaseClient {
     async getOverDueInvoices (props: OverdueInvoicesProps): Promise<ListResponse<Invoice>> {
         const signature = this.signParams({ ...props, apiKey: this.apiKey })
         const params = this.generateSearchParams({ ...props, s: signature, apiKey: this.apiKey }).toString()
-        return await this.request(`${this.baseURL}/invoice/overDue?${params}`)
+        return await this.request(`${this.baseURL}/invoice/getOverDue?${params}`)
     }
 
     /**
@@ -58,6 +58,6 @@ export class FlowInvoiceClient extends BaseClient {
     async retryToCollectInvoice (invoiceId: string): Promise<Invoice> {
         const signature = this.signParams({ invoiceId, apiKey: this.apiKey })
         const body = this.generateSearchParams({ invoiceId, s: signature, apiKey: this.apiKey })
-        return await this.request(`${this.baseURL}/invoice/retry`, { method: 'POST', body })
+        return await this.request(`${this.baseURL}/invoice/retryToCollect`, { method: 'POST', body })
     }
 }

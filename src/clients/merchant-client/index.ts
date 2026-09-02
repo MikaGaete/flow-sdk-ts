@@ -13,7 +13,7 @@ export class FlowMerchantClient extends BaseClient {
      */
     async generateAssociatedCommerce (props: AssociatedCommerceProps): Promise<AssociatedCommerce> {
         const signature = this.signParams({ ...props, apiKey: this.apiKey })
-        const body = this.generateSearchParams({ ...props, s: signature })
+        const body = this.generateSearchParams({ ...props, apiKey: this.apiKey, s: signature })
         return await this.request(`${this.baseURL}/merchant/create`, { method: 'POST', body })
     }
 
@@ -24,7 +24,7 @@ export class FlowMerchantClient extends BaseClient {
      */
     async editAssociatedCommerce (props: AssociatedCommerceProps): Promise<AssociatedCommerce> {
         const signature = this.signParams({ ...props, apiKey: this.apiKey })
-        const body = this.generateSearchParams({ ...props, s: signature })
+        const body = this.generateSearchParams({ ...props, apiKey: this.apiKey, s: signature })
         return await this.request(`${this.baseURL}/merchant/edit`, { method: 'POST', body })
     }
 
@@ -35,7 +35,7 @@ export class FlowMerchantClient extends BaseClient {
      */
     async deleteAssociatedCommerce (commerceId: string): Promise<DeleteCommerceResponse> {
         const signature = this.signParams({ id: commerceId, apiKey: this.apiKey })
-        const body = this.generateSearchParams({ id: commerceId, s: signature })
+        const body = this.generateSearchParams({ id: commerceId, apiKey: this.apiKey, s: signature })
         return await this.request(`${this.baseURL}/merchant/delete`, { method: 'POST', body })
     }
 

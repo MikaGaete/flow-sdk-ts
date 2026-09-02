@@ -56,7 +56,7 @@ export class FlowSubscriptionClient extends BaseClient {
      * @param params - Parameters including the subscription ID and whether to cancel at the period end.
      * @returns A promise resolving to the canceled subscription.
      */
-    async cancelSubscription ({ subscriptionId, atPeriodEnd }: { subscriptionId: string, atPeriodEnd: number }): Promise<Subscription> {
+    async cancelSubscription ({ subscriptionId, atPeriodEnd }: { subscriptionId: string, atPeriodEnd?: number }): Promise<Subscription> {
         const signature = this.signParams({ subscriptionId, at_period_end: atPeriodEnd, apiKey: this.apiKey })
         const body = this.generateSearchParams({ subscriptionId, at_period_end: atPeriodEnd, s: signature, apiKey: this.apiKey })
         return await this.request(`${this.baseURL}/subscription/cancel`, { method: 'POST', body })

@@ -9,8 +9,9 @@ export class FlowPaymentClient extends BaseClient {
      * @throws {Error} If the request fails or if the response does not contain valid payment order status data.
      */
     async getPaymentOrderStatus (transactionToken: string): Promise<Payment> {
-        const url = `${this.baseURL}/payment/getStatus?apiKey=${this.apiKey}&token=${String(transactionToken)}&s=${this.signParams({ token: transactionToken, apiKey: this.apiKey })}`
-        return await this.request<Payment>(url)
+        const signature = this.signParams({ token: transactionToken, apiKey: this.apiKey })
+        const params = this.generateSearchParams({ token: transactionToken, apiKey: this.apiKey, s: signature }).toString()
+        return await this.request<Payment>(`${this.baseURL}/payment/getStatus?${params}`)
     }
 
     /**
@@ -20,30 +21,33 @@ export class FlowPaymentClient extends BaseClient {
      * @throws {Error} If the request fails or if the response does not contain valid extended payment order status data.
      */
     async getExtendedPaymentOrderStatus (transactionToken: string): Promise<ExtendedPaymentOrderStatus> {
-        const url = `${this.baseURL}/payment/getStatusExtended?apiKey=${this.apiKey}&token=${String(transactionToken)}&s=${this.signParams({ token: transactionToken, apiKey: this.apiKey })}`
-        return await this.request<ExtendedPaymentOrderStatus>(url)
+        const signature = this.signParams({ token: transactionToken, apiKey: this.apiKey })
+        const params = this.generateSearchParams({ token: transactionToken, apiKey: this.apiKey, s: signature }).toString()
+        return await this.request<ExtendedPaymentOrderStatus>(`${this.baseURL}/payment/getStatusExtended?${params}`)
     }
 
     /**
-     * Retrieves the extended status of a payment order by flow order.
-     * @param {string} transactionToken - The token associated with the transaction.
-     * @returns {Promise<ExtendedPaymentOrderStatus>} A Promise that resolves to the extended status of the payment order.
-     * @throws {Error} If the request fails or if the response does not contain valid extended payment order status data.
+     * Retrieves the status of a payment order by its Flow order number.
+     * @param {number} flowOrder - The Flow order number associated with the transaction.
+     * @returns {Promise<Payment>} A Promise that resolves to the status of the payment order.
+     * @throws {Error} If the request fails or if the response does not contain valid payment order status data.
      */
-    async getPaymentOrderStatusByFlowOrder (transactionToken: string): Promise<ExtendedPaymentOrderStatus> {
-        const url = `${this.baseURL}/payment/getStatusByFlowOrder?apiKey=${this.apiKey}&token=${String(transactionToken)}&s=${this.signParams({ token: transactionToken, apiKey: this.apiKey })}`
-        return await this.request<ExtendedPaymentOrderStatus>(url)
+    async getPaymentOrderStatusByFlowOrder (flowOrder: number): Promise<Payment> {
+        const signature = this.signParams({ flowOrder, apiKey: this.apiKey })
+        const params = this.generateSearchParams({ flowOrder, apiKey: this.apiKey, s: signature }).toString()
+        return await this.request<Payment>(`${this.baseURL}/payment/getStatusByFlowOrder?${params}`)
     }
 
     /**
-     * Retrieves the extended status of a payment order by flow order.
-     * @param {string} flowOrder - The flow order associated with the transaction.
+     * Retrieves the extended status of a payment order by its Flow order number.
+     * @param {number} flowOrder - The Flow order number associated with the transaction.
      * @returns {Promise<ExtendedPaymentOrderStatus>} A Promise that resolves to the extended status of the payment order.
      * @throws {Error} If the request fails or if the response does not contain valid extended payment order status data.
      */
-    async getExtendedPaymentOrderStatusByFlowOrder (flowOrder: string): Promise<ExtendedPaymentOrderStatus> {
-        const url = `${this.baseURL}/payment/getStatusExtendedByFlowOrder?apiKey=${this.apiKey}&flowOrder=${flowOrder}&s=${this.signParams({ flowOrder, apiKey: this.apiKey })}`
-        return await this.request<ExtendedPaymentOrderStatus>(url)
+    async getExtendedPaymentOrderStatusByFlowOrder (flowOrder: number): Promise<ExtendedPaymentOrderStatus> {
+        const signature = this.signParams({ flowOrder, apiKey: this.apiKey })
+        const params = this.generateSearchParams({ flowOrder, apiKey: this.apiKey, s: signature }).toString()
+        return await this.request<ExtendedPaymentOrderStatus>(`${this.baseURL}/payment/getStatusByFlowOrderExtended?${params}`)
     }
 
     /**
@@ -53,8 +57,9 @@ export class FlowPaymentClient extends BaseClient {
      * @throws {Error} If the request fails or if the response does not contain valid payment order status data.
      */
     async getPaymentOrderStatusByCommerceId (commerceId: string): Promise<Payment> {
-        const url = `${this.baseURL}/payment/getStatusByCommerceId?apiKey=${this.apiKey}&commerceId=${commerceId}&s=${this.signParams({ commerceId, apiKey: this.apiKey })}`
-        return await this.request<Payment>(url)
+        const signature = this.signParams({ commerceId, apiKey: this.apiKey })
+        const params = this.generateSearchParams({ commerceId, apiKey: this.apiKey, s: signature }).toString()
+        return await this.request<Payment>(`${this.baseURL}/payment/getStatusByCommerceId?${params}`)
     }
 
     /**
@@ -65,13 +70,14 @@ export class FlowPaymentClient extends BaseClient {
      * @param {string} [props.currency] - The currency in which the payment is to be made. (Optional)
      * @param {number} props.amount - The amount of the payment.
      * @param {string} props.email - The email address associated with the payment.
-     * @param {string} [props.paymentMethod] - The preferred payment method. (Optional)
+     * @param {number} [props.paymentMethod] - The numeric identifier of the payment method to redirect the payer to. Use 9 for all methods. (Optional)
      * @param {string} props.urlConfirmation - The URL to which confirmation or notification of the payment should be sent.
      * @param {string} props.urlReturn - The URL to which the user should be redirected after completing the payment.
-     * @param {string} [props.optional] - Additional optional information related to the payment order. (Optional)
-     * @param {number} [props.timeout=10] - The timeout duration for the payment order in seconds. Default is 10 minutes. (Optional)
-     * @param {string} [props.merchantId] - The identifier of the merchant associated with the payment. (Optional)
-     * @param {string} [props.payment_currency] - The currency in which the payment is to be made, specific to the payment method. (Optional)
+     * @param {string} [props.optional] - Additional optional information related to the payment order, as a JSON string. (Optional)
+     * @param {number} [props.timeout] - Seconds until the order expires after creation. When omitted the order never expires. (Optional)
+     * @param {number} [props.checkout_timeout] - Seconds the payer has to pick a payment method in the checkout before the order is voided. When omitted no limit applies. (Optional)
+     * @param {string} [props.merchantId] - The identifier of the associated merchant. Only for integrator commerces. (Optional)
+     * @param {string} [props.payment_currency] - The currency in which the order is expected to be paid. (Optional)
      * @returns {Promise<NewPaymentOrderResponse>} A Promise that resolves to the response containing the redirection URL and raw data of the new payment order.
      * @throws {Error} If the request fails or if the response does not contain valid data for generating a new payment order.
      */
@@ -81,7 +87,7 @@ export class FlowPaymentClient extends BaseClient {
 
         const options = {
             method: 'POST',
-            body: this.generateSearchParams({ ...params, s: signature, apiKey: this.apiKey })
+            body: this.generateSearchParams({ ...params, apiKey: this.apiKey, s: signature })
         }
         const url = `${this.baseURL}/payment/create`
         const response = await this.request<RawNewPaymentOrderResponse>(url, options)

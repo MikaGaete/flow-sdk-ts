@@ -68,7 +68,7 @@ export const overdueInvoicesPropsSchema = z.object({
     start: z.number().optional(),
     limit: z.number().optional(),
     filter: z.string().optional(),
-    planId: z.string()
+    planId: z.string().optional()
 })
 
 export type OverdueInvoicesProps = z.infer<typeof overdueInvoicesPropsSchema>
