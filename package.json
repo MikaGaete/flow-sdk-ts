@@ -1,6 +1,6 @@
 {
   "name": "flow-sdk-v2",
-  "version": "2.0.8",
+  "version": "2.1.0",
   "description": "Flow SDK (Not Official)",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -40,7 +40,6 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.0",
-    "@types/crypto-js": "^4.2.2",
     "@types/jest": "^29.5.12",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "eslint": "^8.57.0",

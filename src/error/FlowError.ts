@@ -1,4 +1,5 @@
 export class FlowError extends Error {
+    name: string = 'Flow Error'
     constructor (message: string, title: string) {
         super(`${title}: \n ${message}`)
     }

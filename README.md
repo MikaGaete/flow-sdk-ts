@@ -20,21 +20,25 @@ following commands:
 ## Clients and methods
 
 Before we list all the clients and their respective methods methods you can read
-the official flow documentation in the following [link](https://www.flow.cl/docs/api.html)
+the official flow documentation in the following [link](https://developers.flow.cl/)
 to get more information.
+
+> **Server-side only.** This SDK signs requests with your merchant secret key
+> using Node's built-in `crypto` module, so it is meant to run on a server and
+> must not be bundled for the browser — doing so would also expose your secret.
 
 ### Payment client
 
-Allows the management of regular payments or email payments.
+Allows the management of regular payments (payment orders and their status).
 
 #### Available methods
 
-- *getPaymentOrderStatus()*: Retrieves the status of a payment order.
-- *getExtendedPaymentOrderStatus()*: Retrieves the extended status of a payment order.
-- *getPaymentOrderStatusByFlowOrder()*: Retrieves the extended status of a payment order by flow order.
-- *getExtendedPaymentOrderStatusByFlowOrder()*: Retrieves the extended status of a payment order by flow order.
-- *getPaymentOrderStatusByCommerceId()*: Retrieves the status of a payment order by commerce ID.
-- *generatePaymentOrder()*: Generates a new payment order based on the provided properties.
+- *getPaymentOrderStatus(token)*: Retrieves the status of a payment order by its token.
+- *getExtendedPaymentOrderStatus(token)*: Retrieves the extended status of a payment order by its token.
+- *getPaymentOrderStatusByFlowOrder(flowOrder)*: Retrieves the (simple) status of a payment order by its Flow order number. Takes the numeric Flow order, not a token, and returns the simple `Payment` status.
+- *getExtendedPaymentOrderStatusByFlowOrder(flowOrder)*: Retrieves the extended status of a payment order by its Flow order number.
+- *getPaymentOrderStatusByCommerceId(commerceId)*: Retrieves the status of a payment order by commerce ID.
+- *generatePaymentOrder(props)*: Generates a new payment order. `props.timeout` is **seconds** until the order expires; when omitted the order does not expire.
 
 ### Refund client
 
@@ -72,9 +76,9 @@ subscription plans.
 - *batchChargeCustomers()*: Batch charges multiple customers.
 - *getBatchChargeStatus()*: Retrieves the status of a batch charge.
 - *reverseCharge()*: Reverses a customer charge.
-- *getCustomerCharges()*: Retrieves a list of charges for a customer.
-- *getCustomerChargeAttempts()*: Retrieves a list of charge attempts for a customer.
-- *getCustomerSubscriptions()*: Retrieves a list of subscriptions for a customer.
+- *getCustomerCharges(customerId, filter?)*: Retrieves a list of charges for a customer. `customerId` is required.
+- *getCustomerChargeAttempts(customerId, filter?)*: Retrieves a list of failed charge attempts for a customer. `customerId` is required.
+- *getCustomerSubscriptions(customerId, filter?)*: Retrieves a list of subscriptions for a customer. `customerId` is required.
 
 #### Example
 
@@ -108,7 +112,7 @@ Allows the subscription of clients to plans.
 
 - *generateSubscription()*: Creates a new subscription.
 - *getSubscription()*: Retrieves a subscription by its ID.
-- *getSubscriptions()*: Retrieves a list of subscriptions based on filters.
+- *getSubscriptions(planId, filter?)*: Retrieves the list of subscriptions of a plan. `planId` is required by Flow; it cannot be called with filters alone.
 - *changeTrialDays()*: Changes the trial period days of a subscription.
 - *cancelSubscription()*: Cancels a subscription.
 - *addDiscountCoupon()*: Adds a discount coupon to a subscription.
@@ -188,6 +192,30 @@ Allows the management of associated businesses.
 ```javascript
   const response = flow.merchants.desiredMethod(props);
 ```
+
+## Webhooks
+
+When you create a payment order, Flow sends a `POST` to your `urlConfirmation`
+once the payer acts on it (and to `urlCallBack` for refunds and batch charges).
+That callback carries **only** a `token` field, it is **not signed**, and Flow
+expects an HTTP `200` back quickly. Because the callback is unsigned and its body
+says nothing about the outcome, treat it as a trigger only: on receipt, call
+`getPaymentOrderStatus(token)` (or `getRefundStatus(token)`) to read the verified
+state before updating your records.
+
+## Migrating to this version
+
+- `generatePaymentOrder`: `timeout` is now sent to Flow only when you pass it,
+  and it is measured in **seconds**. Previously the SDK defaulted it to `10`,
+  which Flow read as 10 seconds and expired the order almost immediately. If you
+  relied on an order expiring, pass `timeout` explicitly (in seconds); otherwise
+  the order now stays valid indefinitely, matching Flow's default.
+- `getCustomerCharges`, `getCustomerChargeAttempts` and `getCustomerSubscriptions`
+  now take `customerId` as their first argument, which Flow requires.
+- `getPaymentOrderStatusByFlowOrder` now takes the numeric Flow order number
+  (not a token) and returns the simple `Payment` status.
+- `paymentMethod` (in `generatePaymentOrder`) is now a `number`, and
+  `reverseCharge`'s `flowOrder` is now a `number`.
 
 ## Author
 

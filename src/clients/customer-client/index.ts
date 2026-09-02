@@ -1,6 +1,7 @@
 import { type Filter, type ListResponse } from '../../types'
 import BaseClient from '../base-client/base'
 import { type Payment } from '../payment-client/types'
+import { type Subscription } from '../subscription-client/types'
 import { type BatchChargeCustomersProps, type BatchResponse, type BatchStatus, type ChargeCustomerBaseProps, type ChargeCustomerProps, type Customer, type CustomerProps, type EditCustomerProps, type RegisterProps, type RegisterResponse, type RegisterStatus } from './types'
 
 /**
@@ -47,7 +48,7 @@ export class FlowCustomerClient extends BaseClient {
      */
     async getClient (customerId: string): Promise<Customer> {
         const signature = this.signParams({ customerId, apiKey: this.apiKey })
-        const params = new URLSearchParams({ customerId, s: signature, apiKey: this.apiKey }).toString()
+        const params = this.generateSearchParams({ customerId, s: signature, apiKey: this.apiKey }).toString()
         return await this.request(`${this.baseURL}/customer/get?${params}`)
     }
 
@@ -69,7 +70,7 @@ export class FlowCustomerClient extends BaseClient {
      */
     async generateRegisterLink (props: RegisterProps): Promise<RegisterResponse> {
         const signature = this.signParams({ ...props, apiKey: this.apiKey })
-        const body = new URLSearchParams({ ...props, s: signature, apiKey: this.apiKey })
+        const body = this.generateSearchParams({ ...props, s: signature, apiKey: this.apiKey })
         return await this.request(`${this.baseURL}/customer/register`, { method: 'POST', body })
     }
 
@@ -80,19 +81,19 @@ export class FlowCustomerClient extends BaseClient {
      */
     async getRegisterStatus (token: string): Promise<RegisterStatus> {
         const signature = this.signParams({ token, apiKey: this.apiKey })
-        const params = new URLSearchParams({ token, s: signature, apiKey: this.apiKey }).toString()
+        const params = this.generateSearchParams({ token, s: signature, apiKey: this.apiKey }).toString()
         return await this.request(`${this.baseURL}/customer/getRegisterStatus?${params}`)
     }
 
     /**
-     * Unregisters a customer.
+     * Unregisters a customer's card.
      * @param customerId - ID of the customer to unregister.
      * @returns A promise resolving to the unregistered customer's data.
      */
     async unRegisterCustomer (customerId: string): Promise<Customer> {
         const signature = this.signParams({ customerId, apiKey: this.apiKey })
-        const params = new URLSearchParams({ customerId, s: signature, apiKey: this.apiKey }).toString()
-        return await this.request(`${this.baseURL}/customer/unRegister?${params}`)
+        const body = this.generateSearchParams({ customerId, s: signature, apiKey: this.apiKey })
+        return await this.request(`${this.baseURL}/customer/unRegister`, { method: 'POST', body })
     }
 
     /**
@@ -107,9 +108,11 @@ export class FlowCustomerClient extends BaseClient {
     }
 
     /**
-     * Charges a customer.
+     * Charges a customer (collect).
      * @param props - Properties for charging the customer.
-     * @returns A promise resolving to the charge response.
+     * @returns A promise resolving to the charge response. Typed as `unknown`:
+     * Flow declares this response as the generic `List`-style envelope with no
+     * documented item shape, so a concrete type would be invented, not verified.
      */
     async chargeCustomer (props: ChargeCustomerProps): Promise<unknown> {
         const signature = this.signParams({ ...props, apiKey: this.apiKey })
@@ -135,51 +138,62 @@ export class FlowCustomerClient extends BaseClient {
      */
     async getBatchChargeStatus (token: string): Promise<BatchStatus> {
         const signature = this.signParams({ token, apiKey: this.apiKey })
-        const params = new URLSearchParams({ token, s: signature, apiKey: this.apiKey }).toString()
+        const params = this.generateSearchParams({ token, s: signature, apiKey: this.apiKey }).toString()
         return await this.request(`${this.baseURL}/customer/getBatchCollectStatus?${params}`)
     }
 
     /**
-     * Reverses a customer charge.
-     * @param props - Properties specifying the charge to reverse.
+     * Reverses a customer charge. Either `commerceOrder` or `flowOrder` identifies
+     * the charge; Flow declares both optional.
+     * @param props - The commerce order and/or Flow order of the charge to reverse.
      * @returns A promise resolving to the status and message of the reversal.
      */
-    async reverseCharge (props: { commerceOrder: string, flowOrder: string }): Promise<{ status: string, message: string }> {
+    async reverseCharge (props: { commerceOrder?: string, flowOrder?: number }): Promise<{ status: string, message: string }> {
         const signature = this.signParams({ ...props, apiKey: this.apiKey })
         const body = this.generateSearchParams({ ...props, s: signature, apiKey: this.apiKey })
         return await this.request(`${this.baseURL}/customer/reverseCharge`, { method: 'POST', body })
     }
 
     /**
-     * Retrieves a list of charges for a customer.
-     * @param props - Filters for fetching the charges.
-     * @returns A promise resolving to a list of charges.
+     * Retrieves a paginated list of charges for a customer.
+     * @param customerId - ID of the customer (required by Flow).
+     * @param props - Optional pagination filters plus `fromDate`.
+     * @returns A promise resolving to a list of charges. The element type is
+     * `unknown`: Flow declares this response as the generic `List` envelope whose
+     * `data` is an untyped array of objects, so a concrete type is not available.
      */
-    async getCustomerCharges (props: Filter & { fromDate: string }): Promise<ListResponse<unknown>> {
-        const signature = this.signParams({ ...props, apiKey: this.apiKey })
-        const params = this.generateSearchParams({ ...props, s: signature, apiKey: this.apiKey }).toString()
+    async getCustomerCharges (customerId: string, props?: Filter & { fromDate?: string }): Promise<ListResponse<unknown>> {
+        const signature = this.signParams({ ...props, customerId, apiKey: this.apiKey })
+        const params = this.generateSearchParams({ ...props, customerId, s: signature, apiKey: this.apiKey }).toString()
         return await this.request(`${this.baseURL}/customer/getCharges?${params}`)
     }
 
     /**
-     * Retrieves a list of charge attempts for a customer.
-     * @param props - Filters for fetching the charge attempts.
-     * @returns A promise resolving to a list of charge attempts.
+     * Retrieves a paginated list of failed charge attempts for a customer.
+     *
+     * The path `customer/getChargeAttemps` is spelled with a single `p` on
+     * purpose — that is how Flow declares the operation. Do not "fix" it.
+     * @param customerId - ID of the customer (required by Flow).
+     * @param props - Optional pagination filters plus `fromDate` and `commerceOrder`.
+     * @returns A promise resolving to a list of charge attempts. The element type
+     * is `unknown`: Flow declares this response as the generic `List` envelope
+     * whose `data` is an untyped array of objects.
      */
-    async getCustomerChargeAttempts (props: Filter & { commerceOrder: string }): Promise<ListResponse<unknown>> {
-        const signature = this.signParams({ ...props, apiKey: this.apiKey })
-        const params = this.generateSearchParams({ ...props, s: signature, apiKey: this.apiKey }).toString()
-        return await this.request(`${this.baseURL}/customer/getChargeAttempts?${params}`)
+    async getCustomerChargeAttempts (customerId: string, props?: Filter & { fromDate?: string, commerceOrder?: number }): Promise<ListResponse<unknown>> {
+        const signature = this.signParams({ ...props, customerId, apiKey: this.apiKey })
+        const params = this.generateSearchParams({ ...props, customerId, s: signature, apiKey: this.apiKey }).toString()
+        return await this.request(`${this.baseURL}/customer/getChargeAttemps?${params}`)
     }
 
     /**
-     * Retrieves a list of subscriptions for a customer.
-     * @param props - Filters for fetching subscriptions.
+     * Retrieves a paginated list of subscriptions for a customer.
+     * @param customerId - ID of the customer (required by Flow).
+     * @param props - Optional pagination filters.
      * @returns A promise resolving to a list of subscriptions.
      */
-    async getCustomerSubscriptions (props: Filter): Promise<ListResponse<unknown>> {
-        const signature = this.signParams({ ...props, apiKey: this.apiKey })
-        const params = this.generateSearchParams({ ...props, s: signature, apiKey: this.apiKey }).toString()
+    async getCustomerSubscriptions (customerId: string, props?: Filter): Promise<ListResponse<Subscription>> {
+        const signature = this.signParams({ ...props, customerId, apiKey: this.apiKey })
+        const params = this.generateSearchParams({ ...props, customerId, s: signature, apiKey: this.apiKey }).toString()
         return await this.request(`${this.baseURL}/customer/getSubscriptions?${params}`)
     }
 }

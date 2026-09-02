@@ -1,5 +1,6 @@
 import BaseClient from '../base-client/base'
 import {
+    type EditPlanProps,
     type ListPlansProps,
     type PlansProps,
     type ListPlansResponse,
@@ -24,16 +25,18 @@ export class FlowPlansClient extends BaseClient {
      * @returns {Promise<PlansResponse>} The response containing the plan details.
      */
     async getPlanDetails (planId: string): Promise<PlansResponse> {
-        const url = `${this.baseURL}/plans/get?apiKey=${this.apiKey}&planId=${planId}&s=${this.signParams({ planId, apiKey: this.apiKey })}`
-        return await this.request<PlansResponse>(url)
+        const signature = this.signParams({ planId, apiKey: this.apiKey })
+        const params = this.generateSearchParams({ planId, apiKey: this.apiKey, s: signature }).toString()
+        return await this.request<PlansResponse>(`${this.baseURL}/plans/get?${params}`)
     }
 
     /**
-     * Edits details of a subscription plan.
-     * @param {SubscriptionProps} props - The properties for editing the subscription plan.
+     * Edits details of a subscription plan. Only `planId` is required; for a plan
+     * with active subscribers Flow only allows `trial_period_days` to change.
+     * @param {EditPlanProps} props - The plan id plus the fields to update.
      * @returns {Promise<PlansResponse>} The response containing the updated plan details.
      */
-    async editPlanDetails (props: PlansProps): Promise<PlansResponse> {
+    async editPlanDetails (props: EditPlanProps): Promise<PlansResponse> {
         const url = `${this.baseURL}/plans/edit`
         const body = this.generateSearchParams({ ...props, apiKey: this.apiKey, s: this.signParams({ ...props, apiKey: this.apiKey }) })
         return await this.request<PlansResponse>(url, { method: 'POST', body })
@@ -56,8 +59,8 @@ export class FlowPlansClient extends BaseClient {
      * @returns {Promise<ListPlansResponse>} The response containing the list of plans.
      */
     async listPlans (props: ListPlansProps): Promise<ListPlansResponse> {
-        const params = this.generateSearchParams({ ...props, apiKey: this.apiKey }).toString()
-        const url = `${this.baseURL}/plans/list?${params}&s=${this.signParams(props)}`
-        return await this.request<ListPlansResponse>(url)
+        const signature = this.signParams({ ...props, apiKey: this.apiKey })
+        const params = this.generateSearchParams({ ...props, apiKey: this.apiKey, s: signature }).toString()
+        return await this.request<ListPlansResponse>(`${this.baseURL}/plans/list?${params}`)
     }
 }

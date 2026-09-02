@@ -19,6 +19,7 @@ export interface Settlement {
     final_balance: number
     transferred: number
     billed: number
+    enterprise: string
 }
 
 export interface SettlementDetail extends Settlement {
@@ -50,7 +51,7 @@ export interface Commission {
 
 export interface SettlementPayment {
     paymentMethod: string
-    brand: string
+    brand: string | null
     operations: number
     amount: number
     rate: number
@@ -62,7 +63,7 @@ export interface SettlementPayment {
 
 export interface Credit {
     amount: number
-    commission: number
+    commission: number | null
     taxes: number
     balance: number
     operations: number
@@ -71,7 +72,7 @@ export interface Credit {
 
 export interface Debit {
     amount: number
-    commission: number
+    commission: number | null
     taxes: number
     balance: number
     operations: number
@@ -107,9 +108,9 @@ export interface Debit2 {
     id: number
     date: string
     concept: string
-    trxId: number
+    trxId: string | null
     amount: number
-    commission: number
+    commission: number | null
     taxes: number
     balance: number
 }
@@ -118,9 +119,9 @@ export interface Credit2 {
     id: number
     date: string
     concept: string
-    trxId: number
+    trxId: string | null
     amount: number
-    commission: number
+    commission: number | null
     taxes: number
     balance: number
 }

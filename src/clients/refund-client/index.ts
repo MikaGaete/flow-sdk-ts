@@ -10,8 +10,8 @@ export class FlowRefundClient extends BaseClient {
     async generateRefund (props: RefundProps): Promise<RefundResponse> {
         const params = this.parseParams(props, refundPropsSchema)
         const url = `${this.baseURL}/refund/create`
-        const signature = this.signParams(params)
-        const body = this.generateSearchParams({ ...params, s: signature })
+        const signature = this.signParams({ ...params, apiKey: this.apiKey })
+        const body = this.generateSearchParams({ ...params, apiKey: this.apiKey, s: signature })
         return await this.request(url, { method: 'POST', body })
     }
 
@@ -21,8 +21,10 @@ export class FlowRefundClient extends BaseClient {
      * @returns {Promise<RefundResponse>} A Promise that resolves to the response containing details of the canceled refund.
      */
     async cancelRefund (token: string): Promise<RefundResponse> {
-        const url = `${this.baseURL}/refund/cancel?apiKey=${this.apiKey}&token=${token}&s=${this.signParams({ token })}`
-        return await this.request<RefundResponse>(url)
+        const url = `${this.baseURL}/refund/cancel`
+        const signature = this.signParams({ token, apiKey: this.apiKey })
+        const body = this.generateSearchParams({ token, apiKey: this.apiKey, s: signature })
+        return await this.request<RefundResponse>(url, { method: 'POST', body })
     }
 
     /**
@@ -31,7 +33,8 @@ export class FlowRefundClient extends BaseClient {
      * @returns {Promise<RefundResponse>} A Promise that resolves to the response containing the status details of the refund.
      */
     async getRefundStatus (token: string): Promise<RefundResponse> {
-        const url = `${this.baseURL}/refund/getStatus?apiKey=${this.apiKey}&token=${token}&s=${this.signParams({ token })}`
-        return await this.request<RefundResponse>(url)
+        const signature = this.signParams({ token, apiKey: this.apiKey })
+        const params = this.generateSearchParams({ token, apiKey: this.apiKey, s: signature }).toString()
+        return await this.request<RefundResponse>(`${this.baseURL}/refund/getStatus?${params}`)
     }
 }

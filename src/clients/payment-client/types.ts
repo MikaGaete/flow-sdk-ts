@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { type PendingInfo } from '../..'
+import { type PendingInfo } from '../invoice-client/types'
 
 export const paymentOrderPropsSchema = z.object({
     commerceOrder: z.string(),
@@ -7,11 +7,12 @@ export const paymentOrderPropsSchema = z.object({
     currency: z.string().optional(),
     amount: z.number().positive(),
     email: z.string().email(),
-    paymentMethod: z.string().optional(),
+    paymentMethod: z.number().optional(),
     urlConfirmation: z.string().url(),
     urlReturn: z.string().url(),
     optional: z.string().optional(),
-    timeout: z.number().optional().default(10),
+    timeout: z.number().optional(),
+    checkout_timeout: z.number().optional(),
     merchantId: z.string().optional(),
     payment_currency: z.string().optional()
 })
@@ -69,11 +70,19 @@ export interface PaymentData {
 export interface ExtendedPaymentData extends PaymentData {
     mediaType: string | null
     cardLast4Numbers: string | null
+    cardNumber: string | null
     taxes: number | null
     installments: number | null
     autorizationCode: string | null
 }
 
+export interface PaymentLastError {
+    code: string | null
+    message: string | null
+    medioCode: string | null
+}
+
 export interface ExtendedPaymentOrderStatus extends Payment {
     paymentData: ExtendedPaymentData
+    lastError: PaymentLastError
 }
