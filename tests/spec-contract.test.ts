@@ -1,5 +1,5 @@
 /**
- * Black-box contract test suite for flow-sdk-v2.
+ * Black-box contract test suite for flowcl-sdk.
  *
  * Every assertion here is derived ONLY from Flow's OpenAPI specification
  * (openspec/reference/flow-openapi.yaml) -- never from the SDK's request-building

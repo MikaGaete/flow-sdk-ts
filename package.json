@@ -1,6 +1,6 @@
 {
-  "name": "flow-sdk-v2",
-  "version": "2.2.1",
+  "name": "flowcl-sdk",
+  "version": "3.0.0",
   "description": "SDK de TypeScript (no oficial) para la API de pagos de Flow (flow.cl): pagos, suscripciones, reembolsos, cupones y liquidaciones.",
   "keywords": [
     "flow",
