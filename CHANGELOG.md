@@ -1,4 +1,26 @@
-# flow-sdk-v2
+# flowcl-sdk
+
+## 3.0.0
+
+### Major Changes
+
+- Renombra el paquete de `flow-sdk-v2` a `flowcl-sdk`.
+
+  No hay cambios de API: todos los clientes, métodos, tipos y firmas siguen
+  siendo idénticos. La migración consiste en cambiar la dependencia y la
+  especificación de importación:
+
+  ```bash
+  npm uninstall flow-sdk-v2
+  npm install flowcl-sdk
+  ```
+
+  ```diff
+  - import { Flow } from 'flow-sdk-v2'
+  + import { Flow } from 'flowcl-sdk'
+  ```
+
+  El paquete anterior queda deprecado y no recibirá más versiones.
 
 ## 2.2.1
 

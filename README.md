@@ -1,9 +1,9 @@
 # Flow SDK v2
 
-[![npm](https://img.shields.io/npm/v/flow-sdk-v2)](https://www.npmjs.com/package/flow-sdk-v2)
+[![npm](https://img.shields.io/npm/v/flowcl-sdk)](https://www.npmjs.com/package/flowcl-sdk)
 [![CI](https://img.shields.io/github/actions/workflow/status/MikaGaete/flow-sdk-ts/release.yml?branch=main&label=CI)](https://github.com/MikaGaete/flow-sdk-ts/actions)
-[![types](https://img.shields.io/npm/types/flow-sdk-v2)](https://www.npmjs.com/package/flow-sdk-v2)
-[![license](https://img.shields.io/npm/l/flow-sdk-v2)](./LICENSE)
+[![types](https://img.shields.io/npm/types/flowcl-sdk)](https://www.npmjs.com/package/flowcl-sdk)
+[![license](https://img.shields.io/npm/l/flowcl-sdk)](./LICENSE)
 
 SDK de TypeScript (no oficial) para la API REST de [Flow](https://www.flow.cl),
 la pasarela de pagos chilena. Envuelve la API detrás de clientes tipados por
@@ -11,7 +11,7 @@ recurso —pagos, reembolsos, clientes, planes, suscripciones, ítems adicionale
 cupones, importes, liquidaciones y comercios asociados— y firma cada petición
 por ti.
 
-![Ejemplo de uso de flow-sdk-v2](./flow-sdk-v2.png)
+![Ejemplo de uso de flowcl-sdk](./flow-sdk-v2.png)
 
 > **Sólo para el servidor.** El SDK firma las peticiones con tu *secret key* de
 > comercio usando el módulo `crypto` de Node. No debe empaquetarse para el
@@ -20,9 +20,9 @@ por ti.
 ## Instalación
 
 ```bash
-npm install flow-sdk-v2
+npm install flowcl-sdk
 # o
-yarn add flow-sdk-v2
+yarn add flowcl-sdk
 ```
 
 Requiere una versión de Node con `fetch` global (18 o superior).
@@ -34,7 +34,7 @@ parámetros ordenados alfabéticamente). El SDK las agrega y calcula por ti; só
 necesitas construir el cliente con tus credenciales:
 
 ```ts
-import { Flow } from 'flow-sdk-v2'
+import { Flow } from 'flowcl-sdk'
 
 // env: 'development' apunta a sandbox.flow.cl, 'production' a www.flow.cl
 const flow = new Flow(process.env.FLOW_API_KEY, 'development', process.env.FLOW_SECRET)
@@ -57,7 +57,7 @@ está más abajo, en [Clientes y métodos](#clientes-y-métodos).
   `code` (código de error de Flow), `message` y `url`.
 
 ```ts
-import { FlowHTTPError } from 'flow-sdk-v2'
+import { FlowHTTPError } from 'flowcl-sdk'
 
 try {
     await flow.refunds.getRefundStatus(token)

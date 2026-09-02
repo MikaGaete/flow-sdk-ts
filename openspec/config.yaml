@@ -2,11 +2,11 @@ schema: spec-driven
 
 # Project context (shown to AI when creating artifacts).
 context: |
-  flow-sdk-v2 — unofficial TypeScript SDK for Flow (flow.cl), the Chilean
+  flowcl-sdk — unofficial TypeScript SDK for Flow (flow.cl), the Chilean
   payment gateway. It wraps Flow's REST API behind typed, per-resource clients:
   payments, refunds, customers, plans, subscriptions, coupons, invoices,
   settlements and associated merchants. Published to npm as `flow-sdk-ts`
-  (package name `flow-sdk-v2`) in dual CJS + ESM builds.
+  (package name `flowcl-sdk`) in dual CJS + ESM builds.
 
   Agent model policy (MANDATORY — NO EXCEPTIONS):
     - Opus agents are used ONLY for planning and reviewing. NOTHING else.
