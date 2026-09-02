@@ -29,7 +29,9 @@ to get more information.
 
 ### Payment client
 
-Allows the management of regular payments (payment orders and their status).
+Allows the management of regular payments and email payments: creating payment
+orders, sending charges by email, checking their status, and listing a day's
+payments and transactions.
 
 #### Available methods
 
@@ -39,6 +41,9 @@ Allows the management of regular payments (payment orders and their status).
 - *getExtendedPaymentOrderStatusByFlowOrder(flowOrder)*: Retrieves the extended status of a payment order by its Flow order number.
 - *getPaymentOrderStatusByCommerceId(commerceId)*: Retrieves the status of a payment order by commerce ID.
 - *generatePaymentOrder(props)*: Generates a new payment order. `props.timeout` is **seconds** until the order expires; when omitted the order does not expire.
+- *generateEmailPayment(props)*: Generates a charge sent to the payer by email; Flow emails the order details and a payment link. `props.timeout` is in seconds, same as above.
+- *getPayments({ date, start?, limit? })*: Retrieves the paginated list of payments received on a day (`date` in `yyyy-mm-dd`).
+- *getTransactions({ date, start?, limit? })*: Retrieves the paginated list of transactions performed on a day — a distinct operation from `getPayments`.
 
 ### Refund client
 
@@ -117,11 +122,36 @@ Allows the subscription of clients to plans.
 - *cancelSubscription()*: Cancels a subscription.
 - *addDiscountCoupon()*: Adds a discount coupon to a subscription.
 - *deleteDiscountCoupon()*: Deletes a discount coupon from a subscription.
+- *addItem({ subscriptionId, itemId, quantity? })*: Adds an additional item to a subscription. Omitting `quantity` lets Flow apply its default of 1.
+- *updateItem({ subscriptionId, itemId, quantity })*: Updates the quantity of an additional item on a subscription.
+- *deleteItem({ subscriptionId, itemId })*: Removes an additional item from a subscription.
+- *changePlan({ subscriptionId, newPlanId, startDateOfNewPlan? })*: Changes the plan of a subscription.
+- *previewPlanChange({ subscriptionId, newPlanId, startDateOfNewPlan? })*: Previews the effect of a plan change without applying it.
+- *cancelPlanChange(subscriptionId)*: Cancels a scheduled plan change.
 
 #### Example
 
 ```javascript
   const response = flow.subscriptions.desiredMethod(props);
+```
+
+### Subscription items client
+
+Manages the catalogue of additional items that can be charged on top of a
+subscription's base plan. Exposed as `flow.subscriptionItems`.
+
+#### Available methods
+
+- *createItem({ name, currency, amount })*: Creates an additional item (`amount` negative for a discount, positive for a surcharge).
+- *getItem(itemId)*: Retrieves an additional item by its ID.
+- *editItem({ itemId, name?, amount?, changeType? })*: Edits an additional item.
+- *deleteItem({ itemId, changeType })*: Deletes an additional item (`changeType` is `to_future` or `all`).
+- *listItems(filter?)*: Lists the additional items of the commerce.
+
+#### Example
+
+```javascript
+  const response = flow.subscriptionItems.desiredMethod(props);
 ```
 
 ### Coupon client
