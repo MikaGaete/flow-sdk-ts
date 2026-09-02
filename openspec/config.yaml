@@ -1,0 +1,121 @@
+schema: spec-driven
+
+# Project context (shown to AI when creating artifacts).
+context: |
+  flow-sdk-v2 — unofficial TypeScript SDK for Flow (flow.cl), the Chilean
+  payment gateway. It wraps Flow's REST API behind typed, per-resource clients:
+  payments, refunds, customers, plans, subscriptions, coupons, invoices,
+  settlements and associated merchants. Published to npm as `flow-sdk-ts`
+  (package name `flow-sdk-v2`) in dual CJS + ESM builds.
+
+  Agent model policy (MANDATORY — NO EXCEPTIONS):
+    - Opus agents are used ONLY for planning and reviewing. NOTHING else.
+    - EVERY other task — writing code, editing files, refactoring, running
+      commands, debugging, testing, writing documentation, releasing, git
+      operations — MUST be performed by a Sonnet or Haiku agent.
+    - An Opus agent that finishes a plan or a review MUST hand the work off.
+      It MUST NOT implement its own plan or apply its own review findings.
+    - EVERY implementation MUST be reviewed by a fresh Opus agent that carries
+      NO prior context. The reviewer does not see the planning conversation,
+      the implementer's reasoning or this task's history — only the change
+      proposal, the affected specs and the resulting diff. The agent that
+      wrote the change (or any agent that helped build it) MUST NOT be the
+      reviewer. An implementation is not "done" until such a review has passed
+      and its findings have been addressed by a Sonnet or Haiku agent.
+    - If no Sonnet or Haiku agent is available for implementation, or no
+      clean-context Opus agent is available for review, STOP and ask. Never
+      fall back to Opus for implementation work; never skip the context-free
+      Opus review.
+
+  Tech stack:
+    - Node 24, TypeScript 5.3, source in ES modules (`import` / `export`);
+      tsconfig `module: NodeNext`, `target: ES2022`, `strict: true`.
+    - tsup builds `src/index.ts` into `dist/` as both CJS (`dist/index.js`)
+      and ESM (`dist/index.mjs`) with `.d.ts` declarations. `yarn build`.
+    - zod 3 is the ONLY runtime dependency — used through
+      `BaseClient.parseParams` for input validation.
+    - Native `fetch` for HTTP and native `crypto.createHmac` for request
+      signing. CryptoJS was removed (discontinued); do not reintroduce it.
+    - Jest + ts-jest for tests (`tests/*.test.ts`, `yarn test`).
+    - ESLint `standard-with-typescript` with local overrides: 4-space indent,
+      Stroustrup brace style, `eol-last` off. `yarn lint` runs `tsc`.
+    - Yarn classic (v1 lockfile). Releases go through `@changesets/cli`.
+
+  Architecture:
+    - `src/clients/base-client/base.ts` — abstract `BaseClient` holding
+      `apiKey`, `env`, `secret` and `baseURL` (sandbox vs production). It owns
+      the shared primitives: `request` (fetch wrapper that throws
+      `FlowHTTPError` on a non-2xx response), `signParams` (HMAC-SHA256 over
+      the alphabetically-sorted params — `s` excluded, `apiKey` included — as a
+      hex digest), `parseParams` (zod) and `generateSearchParams`.
+    - One directory per Flow resource under `src/clients/<name>-client/` with
+      `index.ts` (the client class, e.g. `FlowCouponClient extends BaseClient`)
+      and `types.ts` (its request/response types).
+    - `src/clients/flow-client/index.ts` — the `Flow` facade that constructs
+      every client and exposes them as fields (`flow.payments`, `flow.coupons`,
+      …).
+    - `src/error/FlowError.ts` — `FlowError` and `FlowHTTPError`.
+    - `src/types/index.ts` — cross-client shared types (`ListResponse`, …).
+    - `src/index.ts` re-exports every client and its public types; keep it in
+      sync when adding or renaming a client.
+    - No path aliases — relative imports only.
+
+  Flow API conventions (do not break these):
+    - Every request carries `apiKey` and a signature `s`. Build the params,
+      sign them with `signParams`, then include BOTH `s` and `apiKey` in the
+      body or query string.
+    - POST bodies are `application/x-www-form-urlencoded` (URLSearchParams);
+      GET parameters go on the query string.
+    - Base URL is chosen from `env`: `development` → sandbox.flow.cl,
+      `production` → www.flow.cl.
+
+  Code style (match the existing codebase exactly):
+    - Indentation: 4 spaces. Quotes: single. NO semicolons (standard style).
+    - Stroustrup brace style: `catch` / `else` start on their own line.
+    - `import` statements at the top; named exports (`export class`,
+      `export type`). `module.exports` is not used.
+    - Prefer arrow functions assigned to const; async/await over promise chains.
+    - Destructure handler inputs at the top.
+    - Client methods stay thin: sign, build params, call `this.request` — no
+      business logic beyond shaping the Flow call.
+    - Errors surface as `FlowHTTPError` (HTTP) or `FlowError`; never swallow.
+
+  Language rules:
+    - ALL code (identifiers, logs, thrown messages) MUST be in English.
+    - Only documentation (README, OpenSpec artifacts) MAY be in Spanish.
+    - ALL documentation inside code MUST use JSDoc (`/** ... */`) on public
+      methods, with `@param` and `@returns`. No other doc-comment style.
+
+  Commit rules:
+    - Commits MUST NEVER include co-authorship trailers or attributions
+      (no Co-Authored-By, no Generated-with, no session links).
+    - Conventional-commit style: `Type(scope): Summary.` where scope is the
+      path under `src/` (e.g. `clients/coupon-client`, `base-client`).
+      Types in use: Feature, Fix, Refactor, Chore, Docs.
+    - User-facing version bumps are recorded with a changeset, never a manual
+      edit to `package.json`.
+
+# Per-artifact rules
+rules:
+  proposal:
+    - Name the Flow client(s) and endpoint(s) the change affects.
+  tasks:
+    - Add a task to update `src/index.ts` exports whenever a client or a
+      public type is added or renamed.
+    - Add an explicit task for the mandatory clean-context Opus review of the
+      implementation, before archiving.
+
+# Per-operation guidance
+operations:
+  apply:
+    guidance:
+      - Run `yarn lint` and `yarn test` before treating an implementation as
+        complete.
+      - Once the implementation is complete, hand the diff plus the proposal
+        and affected specs to a fresh Opus agent with NO prior context for
+        review. Address its findings with a Sonnet or Haiku agent. Do not
+        proceed to archive until that review has passed.
+  archive:
+    guidance:
+      - Confirm the clean-context Opus review passed and, for a user-facing
+        change, that a changeset exists.
