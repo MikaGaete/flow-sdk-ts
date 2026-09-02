@@ -1,5 +1,33 @@
 # flow-sdk-v2
 
+## 2.2.0
+
+### Minor Changes
+
+- Add the Flow endpoints the SDK did not implement.
+
+  **Payment client**
+
+  - `generateEmailPayment(props)` — `POST /payment/createEmail`, sends a charge to
+    the payer by email.
+  - `getPayments({ date, start?, limit? })` — `GET /payment/getPayments`, the
+    paginated list of payments received on a day.
+  - `getTransactions({ date, start?, limit? })` — `GET /payment/getTransactions`.
+
+  **Subscription client**
+
+  - `addItem` / `updateItem` / `deleteItem` — manage an additional item on a
+    subscription (`/subscription/addItem|updateItem|deleteItem`). `addItem`'s
+    `quantity` is optional and not defaulted client-side.
+  - `changePlan` / `previewPlanChange` / `cancelPlanChange` —
+    `/subscription/changePlan|changePlanPreview|changePlanCancel`.
+
+  **New `flow.subscriptionItems` client** — `FlowSubscriptionItemsClient` over the
+  `/subscription_item/*` routes (create, get, edit, delete, list) for the
+  additional-item catalogue.
+
+  No existing method changes behaviour.
+
 ## 2.1.0
 
 ### Minor Changes
