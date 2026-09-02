@@ -85,18 +85,27 @@ Flow como valor numérico, siguiendo lo que Flow declara.
 El SDK SHALL tipar las respuestas de estas operaciones a partir de los esquemas
 que Flow declara. Cuando Flow declare la respuesta como una lista de objetos sin
 estructura definida, el SDK SHALL conservar un tipo sin resolver antes que
-publicar una forma inventada.
+publicar una forma inventada, salvo que el recurso listado ya esté modelado en
+el SDK a partir de otra operación (caso del listado de suscripciones de un
+cliente, cuyos elementos son suscripciones ya tipadas).
 
 #### Scenario: Respuesta con esquema declarado
 
 - **WHEN** Flow declara la estructura de los elementos devueltos
 - **THEN** el consumidor accede a sus campos con verificación de tipos
 
-#### Scenario: Respuesta sin esquema declarado
+#### Scenario: Respuesta sin esquema declarado y sin modelo previo
 
-- **WHEN** Flow declara la respuesta como una lista de objetos genéricos
+- **WHEN** Flow declara la respuesta como una lista de objetos genéricos y el
+  recurso listado no está modelado en otra parte del SDK
 - **THEN** el tipo permanece sin resolver y la razón queda registrada, en lugar
   de sustituirse por una forma supuesta
+
+#### Scenario: Listado de un recurso ya modelado
+
+- **WHEN** Flow declara la respuesta como una lista genérica pero sus elementos
+  son de un recurso que el SDK ya tipa a partir de otra operación
+- **THEN** el listado reutiliza ese tipo
 
 ### Requirement: Las peticiones del cliente incluyen `apiKey` y firma
 
