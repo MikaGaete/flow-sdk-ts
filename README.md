@@ -1,4 +1,4 @@
-# Flow SDK v2
+# [Flow.cl](https://www.flow.cl) SDK
 
 [![npm](https://img.shields.io/npm/v/flowcl-sdk)](https://www.npmjs.com/package/flowcl-sdk)
 [![CI](https://img.shields.io/github/actions/workflow/status/MikaGaete/flow-sdk-ts/release.yml?branch=main&label=CI)](https://github.com/MikaGaete/flow-sdk-ts/actions)
@@ -11,7 +11,7 @@ recurso —pagos, reembolsos, clientes, planes, suscripciones, ítems adicionale
 cupones, importes, liquidaciones y comercios asociados— y firma cada petición
 por ti.
 
-![Ejemplo de uso de flowcl-sdk](./flow-sdk-v2.png)
+![Ejemplo de uso de flowcl-sdk](./flowcl-sdk.png)
 
 > **Sólo para el servidor.** El SDK firma las peticiones con tu *secret key* de
 > comercio usando el módulo `crypto` de Node. No debe empaquetarse para el
