@@ -1,5 +1,10 @@
 # Flow SDK v2
 
+[![npm](https://img.shields.io/npm/v/flow-sdk-v2)](https://www.npmjs.com/package/flow-sdk-v2)
+[![CI](https://img.shields.io/github/actions/workflow/status/MikaGaete/flow-sdk-ts/release.yml?branch=main&label=CI)](https://github.com/MikaGaete/flow-sdk-ts/actions)
+[![types](https://img.shields.io/npm/types/flow-sdk-v2)](https://www.npmjs.com/package/flow-sdk-v2)
+[![license](https://img.shields.io/npm/l/flow-sdk-v2)](./LICENSE)
+
 SDK de TypeScript (no oficial) para la API REST de [Flow](https://www.flow.cl),
 la pasarela de pagos chilena. Envuelve la API detrás de clientes tipados por
 recurso —pagos, reembolsos, clientes, planes, suscripciones, ítems adicionales,
