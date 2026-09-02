@@ -1,7 +1,25 @@
 {
   "name": "flow-sdk-v2",
-  "version": "2.2.0",
-  "description": "Flow SDK (Not Official)",
+  "version": "2.2.1",
+  "description": "SDK de TypeScript (no oficial) para la API de pagos de Flow (flow.cl): pagos, suscripciones, reembolsos, cupones y liquidaciones.",
+  "keywords": [
+    "flow",
+    "flow.cl",
+    "flowcl",
+    "pagos",
+    "payments",
+    "chile",
+    "chilean",
+    "pasarela-de-pagos",
+    "payment-gateway",
+    "sdk",
+    "typescript",
+    "api",
+    "suscripciones",
+    "subscriptions",
+    "ecommerce",
+    "fintech"
+  ],
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -23,8 +41,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/MikaGaete/flow-sdk-ts"
+    "url": "git+https://github.com/MikaGaete/flow-sdk-ts.git"
   },
+  "bugs": {
+    "url": "https://github.com/MikaGaete/flow-sdk-ts/issues"
+  },
+  "homepage": "https://github.com/MikaGaete/flow-sdk-ts#readme",
   "scripts": {
     "test": "jest",
     "lint": "tsc",
@@ -33,7 +55,7 @@
     "release": "changeset publish"
   },
   "author": "Mikael Gaete López",
-  "license": "ISC",
+  "license": "MIT",
   "publishConfig": {
     "access": "public",
     "provenance": true
