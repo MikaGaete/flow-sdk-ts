@@ -5,6 +5,22 @@
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/MikaGaete/flow-sdk-ts"
@@ -12,12 +28,18 @@
   "scripts": {
     "test": "jest",
     "lint": "tsc",
-    "build": "tsup"
+    "build": "tsup",
+    "prepublishOnly": "yarn build",
+    "release": "changeset publish"
   },
   "author": "Mikael Gaete López",
   "license": "ISC",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "devDependencies": {
-    "@changesets/cli": "^2.27.1",
+    "@changesets/cli": "^2.29.0",
     "@types/crypto-js": "^4.2.2",
     "@types/jest": "^29.5.12",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
