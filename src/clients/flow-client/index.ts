@@ -8,6 +8,7 @@ import { FlowPlansClient } from '../plans-client'
 import { FlowRefundClient } from '../refund-client'
 import { FlowSettlementClient } from '../settlement-client'
 import { FlowSubscriptionClient } from '../subscription-client'
+import { FlowSubscriptionItemsClient } from '../subscription-items-client'
 
 export class Flow {
     payments: FlowPaymentClient
@@ -19,6 +20,7 @@ export class Flow {
     settlement: FlowSettlementClient
     customers: FlowCustomerClient
     subscriptions: FlowSubscriptionClient
+    subscriptionItems: FlowSubscriptionItemsClient
 
     constructor (apiKey: string, env: Environments, secret: string) {
         this.payments = new FlowPaymentClient(apiKey, env, secret)
@@ -30,5 +32,6 @@ export class Flow {
         this.settlement = new FlowSettlementClient(apiKey, env, secret)
         this.customers = new FlowCustomerClient(apiKey, env, secret)
         this.subscriptions = new FlowSubscriptionClient(apiKey, env, secret)
+        this.subscriptionItems = new FlowSubscriptionItemsClient(apiKey, env, secret)
     }
 }
